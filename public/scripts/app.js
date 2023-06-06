@@ -472,6 +472,39 @@ and where to render so that we will create a div in index.html with id and acces
       components. So in those cases we can just make it as a function which returns a jsx which must be rendered. And it can also be used same as
       <functionName /> and props now should be accesed as arguments see below for option,options,action,header
 
+      And to give default values to the props , we can use 
+      functionName.defaultProps = {
+        title : 'Indecision'
+      }
+
+      this can be done to statefull reactcomponents also. classname.defaultProps
+
+      so when a function wants to return an object we use () symbol.
+      for ex:
+        this.setState( () => (    //used ( instead of {
+            {
+                option : []
+            }
+        ))
+
+        There are some lifecycle methods that are only accesible in component based , but not in functional components like
+        componentDidMount() , componentDidUpdate(prevProps,prevState),componentWillUnmount() there is architecture in those , but not in functioanl thats the reason why
+        functional components are remdered fastly.
+
+        localStorage.setItem(key,value); can be used to store key:value pairs
+        localStorage.getItem(key,value); can be used to get key:value pairs
+        localStorage.removeItem(key,value); can be used to remove key:value pairs
+        localStorage.clear(); clears data
+
+        And remember localstorage only works with string data.eventhogh we send 26 , it will store "26"
+        so we should use JSON.stringify() & JSON.parse()
+
+        localStorage persist the data when page loads.
+
+        parseInt(string,10) is used to convert the string to number 
+        NaN  -> not a number 
+        isNaN() can be used to check
+
 */
 
 var IndecisionApp = function (_React$Component) {
@@ -485,6 +518,7 @@ var IndecisionApp = function (_React$Component) {
         _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
         _this.handlePick = _this.handlePick.bind(_this);
         _this.handleAddOption = _this.handleAddOption.bind(_this);
+        _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
         _this.state = {
             options: []
         };
@@ -492,11 +526,49 @@ var IndecisionApp = function (_React$Component) {
     }
 
     _createClass(IndecisionApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            try {
+                var json = localStorage.getItem('options');
+                var options = JSON.parse(json);
+
+                if (options) {
+                    this.setState(function () {
+                        return { options: options };
+                    });
+                }
+            } catch (e) {}
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (prevState.options.length !== this.state.options.length) {
+                var json = JSON.stringify(this.state.options);
+                localStorage.setItem('options', json);
+            }
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            console.log('componentWillUnmount');
+        }
+    }, {
         key: 'handleDeleteOptions',
         value: function handleDeleteOptions() {
+            var _this2 = this;
+
             this.setState(function () {
+                return { options: _this2.props.options };
+            }); // returning an object 
+        }
+    }, {
+        key: 'handleDeleteOption',
+        value: function handleDeleteOption(optionToRemove) {
+            this.setState(function (prevState) {
                 return {
-                    options: []
+                    options: prevState.options.filter(function (option) {
+                        return optionToRemove !== option;
+                    })
                 };
             });
         }
@@ -516,22 +588,19 @@ var IndecisionApp = function (_React$Component) {
                 return 'Option already exists';
             }
             this.setState(function (prevState) {
-                return {
-                    options: prevState.options.concat([option])
-                };
+                return { options: prevState.options.concat([option]) };
             });
         }
     }, {
         key: 'render',
         value: function render() {
-            var title = 'Indecision';
             var subtitle = 'Put your life in the hands of a computer';
             return React.createElement(
                 'div',
                 null,
-                React.createElement(Header, { title: title, subtitle: subtitle, options: this.state.options }),
+                React.createElement(Header, { subtitle: subtitle, options: this.state.options }),
                 React.createElement(Action, { hasOptions: this.state.options.length > 0, handlePick: this.handlePick }),
-                React.createElement(Options, { options: this.state.options, handleDeleteOptions: this.handleDeleteOptions }),
+                React.createElement(Options, { options: this.state.options, handleDeleteOptions: this.handleDeleteOptions, handleDeleteOption: this.handleDeleteOption }),
                 React.createElement(AddOption, { handleAddOption: this.handleAddOption })
             );
         }
@@ -552,9 +621,13 @@ var Header = function Header(props) {
         React.createElement(
             'h2',
             null,
-            props.subtitle
+            props.subtitle && props.subtitle
         )
     );
+};
+
+Header.defaultProps = {
+    title: 'Indecision'
 };
 
 var Action = function Action(props) {
@@ -581,8 +654,17 @@ var Options = function Options(props) {
             { onClick: props.handleDeleteOptions },
             'RemoveAll'
         ),
+        props.options.length === 0 && React.createElement(
+            'p',
+            null,
+            'Please add an option to get started!'
+        ),
         props.options.map(function (option) {
-            return React.createElement(Option, { key: option, optionText: option });
+            return React.createElement(Option, {
+                key: option,
+                optionText: option,
+                handleDeleteOption: props.handleDeleteOption
+            });
         })
     );
 };
@@ -591,10 +673,14 @@ var Option = function Option(props) {
     return React.createElement(
         'div',
         null,
+        props.optionText,
         React.createElement(
-            'p',
-            null,
-            props.optionText
+            'button',
+            { onClick: function onClick(e) {
+                    props.handleDeleteOption(props.optionText);
+                }
+            },
+            'remove'
         )
     );
 };
@@ -605,13 +691,13 @@ var AddOption = function (_React$Component2) {
     function AddOption(props) {
         _classCallCheck(this, AddOption);
 
-        var _this2 = _possibleConstructorReturn(this, (AddOption.__proto__ || Object.getPrototypeOf(AddOption)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (AddOption.__proto__ || Object.getPrototypeOf(AddOption)).call(this, props));
 
-        _this2.handleOnSubmit = _this2.handleOnSubmit.bind(_this2);
-        _this2.state = {
+        _this3.handleOnSubmit = _this3.handleOnSubmit.bind(_this3);
+        _this3.state = {
             error: undefined
         };
-        return _this2;
+        return _this3;
     }
 
     _createClass(AddOption, [{
@@ -623,10 +709,12 @@ var AddOption = function (_React$Component2) {
             var error = this.props.handleAddOption(option);
 
             this.setState(function () {
-                return {
-                    error: error
-                };
+                return { error: error };
             });
+
+            if (!error) {
+                e.target.elements.option.value = ''; // to empty the form input value
+            }
         }
     }, {
         key: 'render',

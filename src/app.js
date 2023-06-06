@@ -462,6 +462,39 @@ and where to render so that we will create a div in index.html with id and acces
       components. So in those cases we can just make it as a function which returns a jsx which must be rendered. And it can also be used same as
       <functionName /> and props now should be accesed as arguments see below for option,options,action,header
 
+      And to give default values to the props , we can use 
+      functionName.defaultProps = {
+        title : 'Indecision'
+      }
+
+      this can be done to statefull reactcomponents also. classname.defaultProps
+
+      so when a function wants to return an object we use () symbol.
+      for ex:
+        this.setState( () => (    //used ( instead of {
+            {
+                option : []
+            }
+        ))
+
+        There are some lifecycle methods that are only accesible in component based , but not in functional components like
+        componentDidMount() , componentDidUpdate(prevProps,prevState),componentWillUnmount() there is architecture in those , but not in functioanl thats the reason why
+        functional components are remdered fastly.
+
+        localStorage.setItem(key,value); can be used to store key:value pairs
+        localStorage.getItem(key,value); can be used to get key:value pairs
+        localStorage.removeItem(key,value); can be used to remove key:value pairs
+        localStorage.clear(); clears data
+
+        And remember localstorage only works with string data.eventhogh we send 26 , it will store "26"
+        so we should use JSON.stringify() & JSON.parse()
+
+        localStorage persist the data when page loads.
+
+        parseInt(string,10) is used to convert the string to number 
+        NaN  -> not a number 
+        isNaN() can be used to check
+
 */
  
 class IndecisionApp extends React.Component{
@@ -470,17 +503,51 @@ class IndecisionApp extends React.Component{
         this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
         this.handlePick = this.handlePick.bind(this);
         this.handleAddOption = this.handleAddOption.bind(this);
+        this.handleDeleteOption = this.handleDeleteOption.bind(this);
         this.state = {
             options : []
         }
     }
 
+    componentDidMount(){
+        try{
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+
+            if(options){
+                this.setState( () => ({options}));
+            }
+        }
+        catch (e) {
+
+        }
+        
+
+    }
+
+    componentDidUpdate(prevProps,prevState){
+        if(prevState.options.length !== this.state.options.length){
+            const json = JSON.stringify(this.state.options);
+            localStorage.setItem('options',json);
+        }
+    }
+
+    componentWillUnmount(){
+        console.log('componentWillUnmount');
+    }
+
     handleDeleteOptions() {
-        this.setState( () => {
-            return {
-                options : []
-            };
-        });
+        this.setState( () => ({options : this.props.options}));  // returning an object 
+    }
+
+    handleDeleteOption(optionToRemove) {
+        this.setState( (prevState) => (
+            {
+                options : prevState.options.filter( (option) => {
+                    return optionToRemove !== option;
+                })
+            }
+        ))
     }
 
     handlePick() {
@@ -496,35 +563,35 @@ class IndecisionApp extends React.Component{
         else if(this.state.options.indexOf(option) > -1){
             return 'Option already exists';
         }
-        this.setState((prevState) => {
-            return {
-                options : prevState.options.concat([option])
-            };
-        });
+        this.setState((prevState) => ({options : prevState.options.concat([option])}));
     }
 
     render(){
-        const title = 'Indecision';
         const subtitle = 'Put your life in the hands of a computer';
         return (
             <div>
-                <Header title={title} subtitle={subtitle} options ={this.state.options}/>
+                <Header subtitle={subtitle} options ={this.state.options}/>
                 <Action hasOptions={this.state.options.length > 0} handlePick={this.handlePick}/>
-                <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions}/>
+                <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions} handleDeleteOption={this.handleDeleteOption}/>
                 <AddOption handleAddOption={this.handleAddOption}/>
             </div>
         );
     }
 }
 
+
 const Header = (props) => { 
     return (
         <div>
             <h1>{props.title}</h1>
-            <h2>{props.subtitle}</h2> 
+            <h2>{props.subtitle && props.subtitle}</h2> 
         </div>
     );
 };
+
+Header.defaultProps = {
+    title: 'Indecision'
+}
 
 const Action  = (props) => {
     return (
@@ -543,8 +610,15 @@ const Options = (props) => {
     return (
         <div>
             <button onClick={props.handleDeleteOptions}>RemoveAll</button>
+            {props.options.length ===0 && <p>Please add an option to get started!</p>}
             {
-                props.options.map( (option) => <Option key={option} optionText={option}/> )
+                props.options.map( (option) => (
+                    <Option 
+                        key={option} 
+                        optionText={option} 
+                        handleDeleteOption={props.handleDeleteOption}
+                    /> 
+                ))
             }
         </div>
     );
@@ -553,7 +627,13 @@ const Options = (props) => {
 const Option = (props) => {
     return (
         <div>
-            <p>{props.optionText}</p>
+            {props.optionText}
+            <button onClick={ (e) => {
+                    props.handleDeleteOption(props.optionText);
+                }}
+            >
+            remove
+            </button>
         </div>
     );
 }
@@ -572,11 +652,11 @@ class AddOption extends React.Component {
 
         const error = this.props.handleAddOption(option);
 
-        this.setState(() => {
-            return {
-                error
-            };
-        })
+        this.setState(() => ({error}))
+
+        if(!error){
+            e.target.elements.option.value = '';   // to empty the form input value
+        }
     }
     render() {
         return (
@@ -594,6 +674,9 @@ class AddOption extends React.Component {
 
 const appRoot = document.getElementById('app');
 ReactDOM.render(<IndecisionApp/>,appRoot);
+
+
+
 
 
 
