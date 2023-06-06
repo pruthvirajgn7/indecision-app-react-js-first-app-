@@ -106,46 +106,365 @@ and where to render so that we will create a div in index.html with id and acces
 
 
 /*
-    And now we will make all the constant variable holders to const as a good practice
+    And now we will make all the constant variable holders to const as a good practice and remove unwanted code 
+
+    and unlike html syntax in jsx syntax we will use className instead of class and id as id(Same) and some are different beacuse 
+    they are reserved keywords in javascript like class , so we use className.
+
+    Here just by changing count valuye will not render the new count value beacuse , jsx does not have builtin data binding 
+
+    and templateTwo only renders once so we have to rerender templateTwo when data changes
+*/
+
+// console.log('App.js is running');
+
+// const app = {
+//     title : 'Indecision App',
+//     subtitle : 'Put your life in the hands of a computer',
+//     options : ['One' , 'Two']
+// };
+
+
+// const template = (
+//     <div>
+//         <h1> {app.title}</h1>
+//         {app.subtitle && <p>{app.subtitle}</p>}
+//         <p>{app.options.length > 0 ? 'Here are your options' : 'No options'}</p>
+//         <ol>
+//             <li>Item One</li>
+//             <li>Item Two</li>
+//         </ol>
+//     </div>  
+// );
+
+// let count = 0;
+// const myId = "my-id";
+// const minusOne = () => {
+//     count--;   
+// }
+
+// const reset = () => {
+//     count = 0;
+// }
+
+
+// const templateTwo = (
+//     <div>
+//         <h1>Count: {count}</h1>
+//         <button id={myId} className="button"  onClick={() => {       // can also define function esewhere and access that function by onclick = {funcname}
+//             count++;
+//         }}>+1</button>
+//         <button onClick={minusOne}>-1</button>
+//         <button onClick={reset}>reset</button>
+//     </div>
+// )
+
+
+// const appRoot = document.getElementById('app');
+
+// ReactDOM.render(templateTwo,appRoot);
+
+
+/*
+        So we can wrap the templateTwo and reactDOM.render in a function and call that function everytime when data changes. see below
+*/
+
+// console.log('App.js is running');
+
+// const app = {
+//     title : 'Indecision App',
+//     subtitle : 'Put your life in the hands of a computer',
+//     options : ['One' , 'Two']
+// };
+
+
+// const template = (
+//     <div>
+//         <h1> {app.title}</h1>
+//         {app.subtitle && <p>{app.subtitle}</p>}
+//         <p>{app.options.length > 0 ? 'Here are your options' : 'No options'}</p>
+//         <ol>
+//             <li>Item One</li>
+//             <li>Item Two</li>
+//         </ol>
+//     </div>  
+// );
+
+// let count = 0;
+// const myId = "my-id";
+
+// const addOne = () => {
+//     count++;
+//     renderCounterApp();
+// }
+
+// const minusOne = () => {
+//     count--;   
+//     renderCounterApp();
+// }
+
+// const reset = () => {
+//     count = 0;
+//     renderCounterApp();
+// }
+
+// const appRoot = document.getElementById('app');
+
+// const renderCounterApp = () => {
+//     const templateTwo = (
+//         <div>
+//             <h1>Count: {count}</h1>
+//             <button id={myId} className="button" onClick={addOne}>+1</button>
+//             <button onClick={minusOne}>-1</button>
+//             <button onClick={reset}>reset</button>
+//         </div>
+//     );
+    
+//     ReactDOM.render(templateTwo,appRoot);
+// }
+
+// renderCounterApp();
+
+/*
+   Here when we submit the code without using onsubmit react dom event , whole page refreshes and the value typed will be in the url which 
+   is not secure when passwords or important data is typed. so we use onSumbit event. use preventDefault();
 
 */
 
-console.log('App.js is running');
+// console.log('App.js is running');
 
-const app = {
-    title : 'Indecision App',
-    subtitle : 'Put your life in the hands of a computer',
-    options : ['One' , 'Two']
-};
+// const app = {
+//     title : 'Indecision App',
+//     subtitle : 'Put your life in the hands of a computer',
+//     options : []
+// };
 
+// const onFormSubmit = (e) => {
+//     e.preventDefault();    // will not make our data appear in url and stops the page refreshing
+//     const option = e.target.elements.option.value;   // here e.target will point to form and .elements will point to its elemnts and in that we will access name which is option in this case and its value by .value
+//     if(option){
+//         app.options.push(option);
+//         e.target.elements.option.value = '';   // reseting to empty value
+//         render();
+//     }
+// }
 
-const template = (
-    <div>
-        <h1> {app.title}</h1>
-        {app.subtitle && <p>{app.subtitle}</p>}
-        <p>{app.options.length > 0 ? 'Here are your options' : 'No options'}</p>
-        <ol>
-            <li>Item One</li>
-            <li>Item Two</li>
-        </ol>
-    </div>  
-);
+// const removeAll = () => {
+//     app.options = [];
+//     render();
+// }
 
-const user = {
-    name : 'pruthvi',
-    age : 21,
-    location : 'banglore',
-};
+// const appRoot = document.getElementById('app');
 
-function getLocation(location){
-    if(location){
-        return <p> Location : {location}</p>;
+// const onMakeDecision = () => {
+//     const randomNum = Math.floor(Math.random()*app.options.length);
+//     const option = app.options[randomNum];
+//     alert(option);
+// }
+
+// const render = () => {
+//     const template = (
+//         <div>
+//             <h1> {app.title}</h1>
+//             {app.subtitle && <p>{app.subtitle}</p>}
+//             <p>{app.options.length > 0 ? 'Here are your options' : 'No options'}</p>
+//             <button disabled={app.options.length === 0} onClick={onMakeDecision}>What should i do</button>
+//             <button onClick={removeAll}>Remove All</button>
+//             <ol>
+//                 {
+//                     app.options.map( (option) => {
+//                         return <li key = {option}>{option}</li>;   //when rendering a array there shoulb be unique identifier else it will give error this is done to optimuze the rendering proces
+//                     })
+//                 }                                 
+//             </ol>
+//             <form onSubmit={onFormSubmit}>
+//                 <input type="text" name="option"/>
+//                 <button>Add Option</button>
+//             </form>
+
+//         </div>  
+//     );
+//     ReactDOM.render(template,appRoot);
+// }
+
+// render();
+
+/*
+    Now we will move to component based architecture that is , we will break a page into components and render them . for example a page is 
+    a big component by itself and it has some child components and those child components may contain some child components and so on.
+    see es6 classes and subclasses from react.txtFirst we will create header component by extending React.Component class.
+    And React.Component need one compulsory method called render().
+    
+    And to render a class(React Component) , we have to use <ClassName /> , see below.
+
+    And incase of className used for react component must start with Capital letter , else error will be given.
+
+    And new concept is React Component props. Sending a data along with component , those are called props.
+    That is we dont want to render the same header on all pages some of the content isnide the header must change. So here we use props. That 
+    we can give give key value pairs when calling the ReactCompnent like <Header title="Test value"/>  and in Header class we can access this as 
+    this.props
+
+    And important concept here is when we pass a function as a pointer . that when we use onclick = {functionName} , then if that function is 
+    using this keyword , it will not work because binding is broken when we pass the functionName . so we have to bind the function to the context of 
+    the object . see below .It will help the reset the context.
+
+    But everytime calling the bind is inefficient , so we will make the use of constructor.
+    in constructor we can bind that function as shown below and use the onclick={fumctionName} normally.    
+
+    see options component
+
+    props basically is used to send the data from parent to the child , but this makes data flow as one way , to solve this issue
+    we will use methods and pass that methods to the children so that children can use that method and manipulate 
+
+*/
+
+class IndecisionApp extends React.Component{
+    constructor(props){
+        super(props);
+        this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
+        this.handlePick = this.handlePick.bind(this);
+        this.handleAddOption = this.handleAddOption.bind(this);
+        this.state = {
+            options : []
+        }
     }
-    else{
-        return undefined;
+
+    handleDeleteOptions() {
+        this.setState( () => {
+            return {
+                options : []
+            };
+        });
+    }
+
+    handlePick() {
+        const randomNum = Math.floor(Math.random()*this.state.options.length);
+        const option = this.state.options[randomNum];
+        alert(option);
+    }
+
+    handleAddOption(option) {
+        if(!option){
+            return 'Please enter valid option';
+        }
+        else if(this.state.options.indexOf(option) > -1){
+            return 'Option already exists';
+        }
+        this.setState((prevState) => {
+            return {
+                options : prevState.options.concat([option])
+            };
+        });
+    }
+
+    render(){
+        const title = 'Indecision';
+        const subtitle = 'Put your life in the hands of a computer';
+        return (
+            <div>
+                <Header title={title} subtitle={subtitle} options ={this.state.options}/>
+                <Action hasOptions={this.state.options.length > 0} handlePick={this.handlePick}/>
+                <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions}/>
+                <AddOption handleAddOption={this.handleAddOption}/>
+            </div>
+        );
     }
 }
 
-const appRoot = document.getElementById('app');
+class Header extends React.Component{   
+    render(){
+        return (
+            <div>
+                <h1>{this.props.title}</h1>
+                <h2>{this.props.subtitle}</h2> 
+            </div>
+        );
+    }
+}
 
-ReactDOM.render(template,appRoot);
+class Action extends React.Component {
+    render() {
+        return (
+            <div>
+                <button 
+                    onClick={this.props.handlePick}
+                    disabled = {!this.props.hasOptions}
+                >
+                    What should I do?
+                </button>
+            </div>
+        );
+    }
+}
+
+class Options extends React.Component {
+    render() {
+        return (
+            <div>
+                <button onClick={this.props.handleDeleteOptions}>RemoveAll</button>
+                {
+                    this.props.options.map( (option) => <Option key={option} optionText={option}/> )
+                }
+            </div>
+        );
+    }
+}
+
+class Option extends React.Component{
+    render(){
+        return (
+            <div>
+                <p>{this.props.optionText}</p>
+            </div>
+        );
+    }
+}
+
+class AddOption extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleOnSubmit = this.handleOnSubmit.bind(this);
+        this.state = {
+            error : undefined
+        }
+    }
+    handleOnSubmit(e){
+        e.preventDefault();
+        const option = e.target.elements.option.value.trim();
+
+        const error = this.props.handleAddOption(option);
+
+        this.setState(() => {
+            return {
+                error
+            };
+        })
+    }
+    render() {
+        return (
+            <div>
+                {this.state.error && <p>{this.state.error}</p>}
+                <form onSubmit={this.handleOnSubmit.bind(this)}>
+                    <input type="text" name="option" />
+                    <button>AddOption</button>
+                </form>
+            </div>
+        );
+    }
+}
+
+
+const appRoot = document.getElementById('app');
+ReactDOM.render(<IndecisionApp/>,appRoot);
+
+/*
+    
+
+*/
+
+
+
+
+
+
+
