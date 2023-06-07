@@ -746,3 +746,15 @@ var AddOption = function (_React$Component2) {
 
 var appRoot = document.getElementById('app');
 ReactDOM.render(React.createElement(IndecisionApp, null), appRoot);
+
+/*
+    Webpack is a asset bundle which helps us make app segregate and helps us to organize the javascript . So when we run our app using webback
+    we get a single js file called which conatins everything what app has to render,dependencies.
+
+    And webpack will run babel code by itself , we dont have to run each time . So when we send the code to others, their code doesn't run as we have
+    installed babel-cli , live-server , and in their system , it might not be found.
+        So we will uninstall them globally and install them locally. so that they will added to dependencies.
+
+        code : npm uninstall -g babel-cli live-server   (or) yarn global remove babel-cli live-server
+
+*/

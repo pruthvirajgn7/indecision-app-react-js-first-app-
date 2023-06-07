@@ -496,181 +496,231 @@ and where to render so that we will create a div in index.html with id and acces
         isNaN() can be used to check
 
 */
+
+
  
-class IndecisionApp extends React.Component{
-    constructor(props){
-        super(props);
-        this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
-        this.handlePick = this.handlePick.bind(this);
-        this.handleAddOption = this.handleAddOption.bind(this);
-        this.handleDeleteOption = this.handleDeleteOption.bind(this);
-        this.state = {
-            options : []
-        }
-    }
+// class IndecisionApp extends React.Component{
+//     constructor(props){
+//         super(props);
+//         this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
+//         this.handlePick = this.handlePick.bind(this);
+//         this.handleAddOption = this.handleAddOption.bind(this);
+//         this.handleDeleteOption = this.handleDeleteOption.bind(this);
+//         this.state = {
+//             options : []
+//         }
+//     }
 
-    componentDidMount(){
-        try{
-            const json = localStorage.getItem('options');
-            const options = JSON.parse(json);
+//     componentDidMount(){
+//         try{
+//             const json = localStorage.getItem('options');
+//             const options = JSON.parse(json);
 
-            if(options){
-                this.setState( () => ({options}));
-            }
-        }
-        catch (e) {
+//             if(options){
+//                 this.setState( () => ({options}));
+//             }
+//         }
+//         catch (e) {
 
-        }
+//         }
         
 
-    }
+//     }
 
-    componentDidUpdate(prevProps,prevState){
-        if(prevState.options.length !== this.state.options.length){
-            const json = JSON.stringify(this.state.options);
-            localStorage.setItem('options',json);
-        }
-    }
+//     componentDidUpdate(prevProps,prevState){
+//         if(prevState.options.length !== this.state.options.length){
+//             const json = JSON.stringify(this.state.options);
+//             localStorage.setItem('options',json);
+//         }
+//     }
 
-    componentWillUnmount(){
-        console.log('componentWillUnmount');
-    }
+//     componentWillUnmount(){
+//         console.log('componentWillUnmount');
+//     }
 
-    handleDeleteOptions() {
-        this.setState( () => ({options : this.props.options}));  // returning an object 
-    }
+//     handleDeleteOptions() {
+//         this.setState( () => ({options : this.props.options}));  // returning an object 
+//     }
 
-    handleDeleteOption(optionToRemove) {
-        this.setState( (prevState) => (
-            {
-                options : prevState.options.filter( (option) => {
-                    return optionToRemove !== option;
-                })
+//     handleDeleteOption(optionToRemove) {
+//         this.setState( (prevState) => (
+//             {
+//                 options : prevState.options.filter( (option) => {
+//                     return optionToRemove !== option;
+//                 })
+//             }
+//         ))
+//     }
+
+//     handlePick() {
+//         const randomNum = Math.floor(Math.random()*this.state.options.length);
+//         const option = this.state.options[randomNum];
+//         alert(option);
+//     }
+
+//     handleAddOption(option) {
+//         if(!option){
+//             return 'Please enter valid option';
+//         }
+//         else if(this.state.options.indexOf(option) > -1){
+//             return 'Option already exists';
+//         }
+//         this.setState((prevState) => ({options : prevState.options.concat([option])}));
+//     }
+
+//     render(){
+//         const subtitle = 'Put your life in the hands of a computer';
+//         return (
+//             <div>
+//                 <Header subtitle={subtitle} options ={this.state.options}/>
+//                 <Action hasOptions={this.state.options.length > 0} handlePick={this.handlePick}/>
+//                 <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions} handleDeleteOption={this.handleDeleteOption}/>
+//                 <AddOption handleAddOption={this.handleAddOption}/>
+//             </div>
+//         );
+//     }
+// }
+
+
+// const Header = (props) => { 
+//     return (
+//         <div>
+//             <h1>{props.title}</h1>
+//             <h2>{props.subtitle && props.subtitle}</h2> 
+//         </div>
+//     );
+// };
+
+// Header.defaultProps = {
+//     title: 'Indecision'
+// }
+
+// const Action  = (props) => {
+//     return (
+//         <div>
+//             <button 
+//                 onClick={props.handlePick}
+//                 disabled = {!props.hasOptions}
+//             >
+//                 What should I do?
+//             </button>
+//         </div>
+//     );
+// };
+
+// const Options = (props) => {
+//     return (
+//         <div>
+//             <button onClick={props.handleDeleteOptions}>RemoveAll</button>
+//             {props.options.length ===0 && <p>Please add an option to get started!</p>}
+//             {
+//                 props.options.map( (option) => (
+//                     <Option 
+//                         key={option} 
+//                         optionText={option} 
+//                         handleDeleteOption={props.handleDeleteOption}
+//                     /> 
+//                 ))
+//             }
+//         </div>
+//     );
+// };
+
+// const Option = (props) => {
+//     return (
+//         <div>
+//             {props.optionText}
+//             <button onClick={ (e) => {
+//                     props.handleDeleteOption(props.optionText);
+//                 }}
+//             >
+//             remove
+//             </button>
+//         </div>
+//     );
+// }
+
+// class AddOption extends React.Component {
+//     constructor(props){
+//         super(props);
+//         this.handleOnSubmit = this.handleOnSubmit.bind(this);
+//         this.state = {
+//             error : undefined
+//         }
+//     }
+//     handleOnSubmit(e){
+//         e.preventDefault();
+//         const option = e.target.elements.option.value.trim();
+
+//         const error = this.props.handleAddOption(option);
+
+//         this.setState(() => ({error}))
+
+//         if(!error){
+//             e.target.elements.option.value = '';   // to empty the form input value
+//         }
+//     }
+//     render() {
+//         return (
+//             <div>
+//                 {this.state.error && <p>{this.state.error}</p>}
+//                 <form onSubmit={this.handleOnSubmit.bind(this)}>
+//                     <input type="text" name="option" />
+//                     <button>AddOption</button>
+//                 </form>
+//             </div>
+//         );
+//     }
+// }
+
+
+// const appRoot = document.getElementById('app');
+// ReactDOM.render(<IndecisionApp/>,appRoot);
+
+
+
+/*
+    Webpack is a asset bundle which helps us make app segregate and helps us to organize the javascript . So when we run our app using webback
+    we get a single js file called which conatins everything what app has to render,dependencies.
+
+    And webpack will run babel code by itself , we dont have to run each time . So when we send the code to others, their code doesn't run as we have
+    installed babel-cli , live-server , and in their system , it might not be found.
+        So we will uninstall them globally and install them locally. so that they will added to dependencies.
+
+        code : npm uninstall -g babel-cli live-server   (or) yarn global remove babel-cli live-server
+        and    npm install babel-cli@6.24.1 live-server          or  yarn add live-server babel-cli@6.24.1 live-server
+
+    And instead of running these from terminal we will set the scripts inside package.json to run these (see scripts in pacakge.json)
+    and we will run by 
+        yarn run serve
+        yarn run build-babel
+
+    Now to run babel with webpack we want to babel-core@6.25.0 and babel-loader@7.1.1
+    and set module in webpack.config.js to set rules how to use code . That it we will set whenever u will see a js file except nod_modules
+    use babel to convert the code . Thats the rule written.
+
+    Now will split the app.js into smaller individual components
+
+    by using babel-transform-class-properties syntax, we can use normal varible decaltaion inside class instead of declaring in constructor
+      i.e,  
+            class NewSyntax{
+                  name =  'pruthvi';
             }
-        ))
-    }
 
-    handlePick() {
-        const randomNum = Math.floor(Math.random()*this.state.options.length);
-        const option = this.state.options[randomNum];
-        alert(option);
-    }
+      and to avoid the binding of the function in everytime , we can make those methods as arrow functions . And as arrow functions doesn't have 
+      their own this binding , this will refer to the parent of that method which is class , so this solves the problem.
 
-    handleAddOption(option) {
-        if(!option){
-            return 'Please enter valid option';
-        }
-        else if(this.state.options.indexOf(option) > -1){
-            return 'Option already exists';
-        }
-        this.setState((prevState) => ({options : prevState.options.concat([option])}));
-    }
+      we will change all methods in components folder to a arrow functions and remove the binding in constructor  (because of transform-class-properties)
+            of babel
 
-    render(){
-        const subtitle = 'Put your life in the hands of a computer';
-        return (
-            <div>
-                <Header subtitle={subtitle} options ={this.state.options}/>
-                <Action hasOptions={this.state.options.length > 0} handlePick={this.handlePick}/>
-                <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions} handleDeleteOption={this.handleDeleteOption}/>
-                <AddOption handleAddOption={this.handleAddOption}/>
-            </div>
-        );
-    }
-}
+     We will install react-modal third party component
+
+*/ 
 
 
-const Header = (props) => { 
-    return (
-        <div>
-            <h1>{props.title}</h1>
-            <h2>{props.subtitle && props.subtitle}</h2> 
-        </div>
-    );
-};
-
-Header.defaultProps = {
-    title: 'Indecision'
-}
-
-const Action  = (props) => {
-    return (
-        <div>
-            <button 
-                onClick={props.handlePick}
-                disabled = {!props.hasOptions}
-            >
-                What should I do?
-            </button>
-        </div>
-    );
-};
-
-const Options = (props) => {
-    return (
-        <div>
-            <button onClick={props.handleDeleteOptions}>RemoveAll</button>
-            {props.options.length ===0 && <p>Please add an option to get started!</p>}
-            {
-                props.options.map( (option) => (
-                    <Option 
-                        key={option} 
-                        optionText={option} 
-                        handleDeleteOption={props.handleDeleteOption}
-                    /> 
-                ))
-            }
-        </div>
-    );
-};
-
-const Option = (props) => {
-    return (
-        <div>
-            {props.optionText}
-            <button onClick={ (e) => {
-                    props.handleDeleteOption(props.optionText);
-                }}
-            >
-            remove
-            </button>
-        </div>
-    );
-}
-
-class AddOption extends React.Component {
-    constructor(props){
-        super(props);
-        this.handleOnSubmit = this.handleOnSubmit.bind(this);
-        this.state = {
-            error : undefined
-        }
-    }
-    handleOnSubmit(e){
-        e.preventDefault();
-        const option = e.target.elements.option.value.trim();
-
-        const error = this.props.handleAddOption(option);
-
-        this.setState(() => ({error}))
-
-        if(!error){
-            e.target.elements.option.value = '';   // to empty the form input value
-        }
-    }
-    render() {
-        return (
-            <div>
-                {this.state.error && <p>{this.state.error}</p>}
-                <form onSubmit={this.handleOnSubmit.bind(this)}>
-                    <input type="text" name="option" />
-                    <button>AddOption</button>
-                </form>
-            </div>
-        );
-    }
-}
-
+import React from "react";
+import ReactDOM  from "react-dom";
+import IndecisionApp from './components/IndecisionApp'
 
 const appRoot = document.getElementById('app');
 ReactDOM.render(<IndecisionApp/>,appRoot);
